@@ -14,7 +14,7 @@
 
 # synapse-mcp
 
-**Stop paying your AI agent to blindly grep whitespace.**
+**Your structural brain for your coding AI agents.**
 
 [![Free](https://img.shields.io/badge/Free-forever-22c55e?style=flat-square)](https://synapse-mcp.dev)
 [![Pro](https://img.shields.io/badge/Pro-%2419%2Fmo-2ef2ff?style=flat-square)](https://synapse-mcp.dev/pro)
