@@ -34,7 +34,7 @@ Synapse-MCP is a **free, 100% local MCP server** that converts your codebase int
 curl -fsSL https://downloads.synapse-mcp.dev/install.sh | sh
 
 # Windows PowerShell
-powershell -c "irm https://downloads.synapse-mcp.dev/install.ps1 | iex"
+irm https://downloads.synapse-mcp.dev/install.ps1 | iex
 ```
 
 ---
