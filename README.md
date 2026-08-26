@@ -27,7 +27,7 @@
 
 ---
 
-Synapse-MCP is a **free, 100% local MCP server** that converts your codebase into a persistent, on-device AST knowledge graph. Claude, Cursor, Copilot, and every MCP-compatible agent gets exact caller trees, semantic search, and zero-hallucination refactoring — at **60% lower token spend** than shell tools. **Your code never leaves your machine.**
+Synapse MCP is a **free, 100% local MCP server** that converts your codebase into a persistent, on-device AST knowledge graph. Claude, Cursor, Copilot, and every MCP-compatible agent gets exact caller trees, semantic search, and zero-hallucination refactoring — at **60% lower token spend** than shell tools. **Your code never leaves your machine.**
 
 ```sh
 # Linux / macOS
