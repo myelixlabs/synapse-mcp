@@ -1,0 +1,28 @@
+---
+description: Rules for using Synapse MCP — prefer the graph over grep
+globs: **/*
+alwaysApply: true
+---
+
+# Synapse MCP — Graph-First Workflow
+
+You have access to Synapse MCP, a persistent AST code-knowledge graph of this codebase. Follow these rules to make the most of it.
+
+## Discovery
+- Use `ask_synapse` for ALL codebase questions first — before grepping, before reading files.
+- For "can I delete X?" or "is X still used?", include `inputs.chunk_id` or `inputs.symbol` with arity.
+- If `ask_synapse` returns `completion_state: "tool_call_required"`, follow the first safe `next_tool_calls` entry.
+
+## Writing Code
+- Use `write_safely` for ALL file modifications. It simulates the edit in memory, verifies callers, and auto-rolls back on failure.
+- Never use standard file write tools for code edits. `write_safely` exists specifically to prevent broken files.
+
+## Debugging
+- When pasting a stack trace, use `resolve_stack` to map frames to AST chunks and get root-cause analysis.
+- Use `review_diff` before committing — it ranks blast radius, broken contracts, and tests to run.
+
+## Memory
+- Synapse persists summaries across sessions. When you learn something about the codebase, write it to the knowledge cache so future sessions benefit.
+
+## Fallback
+- Only fall back to shell grep/file reads if Synapse returns no safe route or the task is explicitly non-codebase.

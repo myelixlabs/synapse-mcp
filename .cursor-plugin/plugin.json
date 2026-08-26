@@ -1,0 +1,25 @@
+{
+  "name": "synapse-mcp",
+  "displayName": "Synapse MCP",
+  "version": "1.0.0",
+  "author": {
+    "name": "Myelix Labs",
+    "email": "contact@myelixlabs.com"
+  },
+  "description": "Persistent AST knowledge graph and safe writes for AI coding agents across 50+ languages. 100% local \u2014 no cloud indexing, no telemetry.",
+  "homepage": "https://synapse-mcp.dev",
+  "repository": "https://github.com/myelixlabs/synapse-mcp",
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "ast",
+    "codebase-graph",
+    "refactoring",
+    "safe-writes",
+    "token-savings"
+  ],
+  "logo": "assets/logo.svg",
+  "rules": "rules/",
+  "commands": "commands/",
+  "mcpServers": "mcp.json"
+}
