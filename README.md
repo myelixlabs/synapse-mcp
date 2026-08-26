@@ -12,7 +12,7 @@
   <path d="M28 30 L36 30" stroke="#fff" stroke-width="2" opacity="0.8"/>
 </svg>
 
-# synapse-mcp
+# Synapse MCP Server
 
 **Your structural brain for your coding AI agents.**
 
