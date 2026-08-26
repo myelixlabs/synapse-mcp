@@ -1,0 +1,18 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.myelixlabs/synapse-mcp",
+  "description": "Local AST code-knowledge graph for AI coding agents. 50+ languages, 14 MCP tools, 60% token savings, safe writes with auto-rollback. 100% local.",
+  "version": "3.11.0",
+  "repository": {
+    "url": "https://github.com/myelixlabs/synapse-mcp",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "name": "@myelixlabs/synapse-mcp",
+      "version": "3.11.0"
+    }
+  ]
+}
