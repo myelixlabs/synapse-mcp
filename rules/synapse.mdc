@@ -26,3 +26,11 @@ You have access to Synapse MCP, a persistent AST code-knowledge graph of this co
 
 ## Fallback
 - Only fall back to shell grep/file reads if Synapse returns no safe route or the task is explicitly non-codebase.
+
+## When the Synapse tools are missing entirely
+Do not silently drop back to grep. Say why, and name the case:
+- **Installed but stopped** — `synapse-mcp start`, then `synapse-mcp enable` to register autostart so it returns at login.
+- **Not installed** — `curl -fsSL https://downloads.synapse-mcp.dev/install.sh | sh` on macOS and Linux, or `powershell -c "irm https://downloads.synapse-mcp.dev/install.ps1 | iex"` on Windows, followed by `synapse-mcp install`. The `/synapse-setup` command walks through it.
+- **Running on a different machine** — with WSL, remote SSH, or a devcontainer, Cursor's `127.0.0.1` is not the repository's. Synapse has to run on the side the code is on.
+
+Use ordinary tooling meanwhile so the user is not blocked, and mention that results cost more tokens until Synapse is reachable.

@@ -6,7 +6,7 @@
     "name": "Myelix Labs",
     "email": "contact@myelixlabs.com"
   },
-  "description": "Persistent AST knowledge graph and safe writes for AI coding agents across 50+ languages. 100% local \u2014 no cloud indexing, no telemetry.",
+  "description": "Persistent AST knowledge graph and safe writes for AI coding agents across 50+ languages. 100% local — no cloud indexing, no telemetry.",
   "homepage": "https://synapse-mcp.dev",
   "repository": "https://github.com/myelixlabs/synapse-mcp",
   "license": "MIT",
@@ -19,6 +19,7 @@
     "token-savings"
   ],
   "logo": "assets/logo.svg",
+  "skills": "skills/",
   "rules": "rules/",
   "commands": "commands/",
   "mcpServers": "mcp.json"

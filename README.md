@@ -517,6 +517,80 @@ The installer auto-detects your MCP client (Cursor, Claude Code, Windsurf, VS Co
 
 ---
 
+## Cursor Plugin
+
+This repository doubles as a [Cursor](https://cursor.com) plugin. Installing it
+connects Cursor to the Synapse server running on your machine and adds the agent
+skill and routing rule that keep the agent on the knowledge graph instead of
+grep.
+
+[![Add Synapse MCP to Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=synapse&config=eyJ1cmwiOiJodHRwOi8vMTI3LjAuMC4xOjg1ODUvbWNwIn0=)
+
+**The plugin ships no binaries and downloads nothing.** It is configuration — it
+points Cursor at `http://127.0.0.1:8585/mcp`, which is where Synapse listens once
+it is installed and running. Install Synapse first:
+
+```sh
+# macOS / Linux
+curl -fsSL https://downloads.synapse-mcp.dev/install.sh | sh
+
+# Windows
+powershell -c "irm https://downloads.synapse-mcp.dev/install.ps1 | iex"
+```
+
+Then `synapse-mcp install` to sign in, start the service, and enable autostart.
+Already have it? `synapse-mcp status` will tell you.
+
+If you install the plugin before Synapse, nothing breaks — the rule and skill
+load, and the `synapse` MCP server simply shows as disconnected until the
+service is up. Run `/synapse-setup` in Cursor and the agent will walk you
+through it.
+
+**What you get**
+
+| Component | Path | What it does |
+|---|---|---|
+| MCP server | `mcp.json` | Registers `synapse` against your local server |
+| Skill | `skills/synapse-mcp/` | Full tool reference and workflows |
+| Rule | `rules/synapse.mdc` | Routes discovery through Synapse, not grep |
+| Command | `commands/synapse-setup.md` | `/synapse-setup` — install, start, verify |
+
+The endpoint is identical on macOS, Linux, and Windows, so there is nothing
+platform-specific in the configuration. Autostart is user-level on all three —
+launchd, a systemd user unit, or Task Scheduler — and needs no root or admin
+rights. See [OS Autostart](#os-autostart).
+
+**WSL, remote SSH, and devcontainers**
+
+If Cursor runs on one machine and your code lives on another — Windows Cursor
+against a WSL checkout, a remote SSH host, a devcontainer — then Cursor's
+`127.0.0.1` and the repository's `127.0.0.1` are two different machines. Install
+and run Synapse on the side the repository is on, and make sure port 8585 there
+is reachable from the side running Cursor.
+
+**Developing against it locally**
+
+Cursor's local plugin loader rejects symlinks whose target lies outside
+`~/.cursor/plugins/local`, so copy the directory in rather than linking it:
+
+```sh
+rsync -a --delete --exclude .git ./ ~/.cursor/plugins/local/synapse-mcp/
+```
+
+Re-run that after each change, then restart Cursor or run
+**Developer: Reload Window**, and check **Customize** for the rule, skill,
+command, and MCP server.
+
+If the plugin does not appear, the loader logs why. Look for
+`loadUserLocalPlugin` in:
+
+```sh
+ls -t ~/Library/Application\ Support/Cursor/logs | head -1
+# then: <that dir>/window*/exthost/anysphere.cursor-agent-exec/Cursor\ Plugins.*.log
+```
+
+---
+
 ## Privacy
 
 **100% local.** Synapse runs entirely on your machine. No code leaves your environment, no cloud dependencies, no data egress. Your codebase stays yours.
@@ -529,7 +603,7 @@ The installer auto-detects your MCP client (Cursor, Claude Code, Windsurf, VS Co
 
 LLMs are trained on billions of lines of code where developers reach for `grep`, `find`, `cat`, and `ls` to explore a codebase. That muscle memory is baked into the model weights. When an agent is dropped into a new project, its first instinct is to grep — even when a smarter, cheaper tool is available.
 
-Synapse ships a set of **agent skill files** (`.agents/skills/synapse-mcp/SKILL.md`, `AGENTS.md`) that agents load at session start. These files override the grep instinct by giving agents explicit routing rules, anti-patterns, and example tool calls. They are, in effect, **runtime training for the meta-layer** — teaching agents *how* to use the tools they have, not just what the tools do.
+Synapse ships a set of **agent skill files** (`skills/synapse-mcp/SKILL.md`, `AGENTS.md`) that agents load at session start. These files override the grep instinct by giving agents explicit routing rules, anti-patterns, and example tool calls. They are, in effect, **runtime training for the meta-layer** — teaching agents *how* to use the tools they have, not just what the tools do.
 
 **The problem:** We can only write what we observe. You may have seen failure modes, routing gaps, or phrasing that your specific agent ignores. We haven't. The skill files improve dramatically with real-world usage reports.
 
@@ -547,10 +621,10 @@ Synapse ships a set of **agent skill files** (`.agents/skills/synapse-mcp/SKILL.
 ### How to contribute
 
 1. **Open an issue** — describe the failure mode or gap you observed. Include the agent, the query, and what it did vs. what it should have done.
-2. **Open a PR** — edit [`AGENTS.md`](AGENTS.md) or [`.agents/skills/synapse-mcp/SKILL.md`](.agents/skills/synapse-mcp/SKILL.md) directly. Skill file PRs are reviewed and merged fast — they don't require tests.
+2. **Open a PR** — edit [`AGENTS.md`](AGENTS.md) or [`skills/synapse-mcp/SKILL.md`](skills/synapse-mcp/SKILL.md) directly. Skill file PRs are reviewed and merged fast — they don't require tests.
 3. **Share a benchmark** — if you've run Synapse vs. shell tools on your own codebase and have numbers, we want to publish them.
 
-The skill files live at the repo root and in `.agents/`. They are plain Markdown — no Elixir knowledge required. If you can describe what went wrong, you can write the fix.
+The skill files live in `skills/`. They are plain Markdown — no Elixir knowledge required. If you can describe what went wrong, you can write the fix.
 
 ---
 
@@ -561,6 +635,24 @@ Synapse gives your existing AI agents a precision map of your codebase. **Myelix
 Where current agents react — reading a file, writing a change, hoping for the best — Myelix Agents plan. They maintain an explicit task model, reason about risk before touching code, incorporate learnings from previous sessions (via Synapse's knowledge graph), and course-correct when something goes wrong. Accuracy over speed. Thought over grep.
 
 Synapse Pro subscribers will get early access. [Join the waitlist →](https://synapse-mcp.dev)
+
+---
+
+## License
+
+Two different things live under one name, so it is worth being precise.
+
+**This repository** — the documentation, the `skills/synapse-mcp` agent skill,
+and the Cursor plugin — is [MIT licensed](LICENSE). Copy it, adapt it, ship it
+in your own tooling. Pull requests on the skill files are welcome.
+
+**The Synapse MCP server** is proprietary. Its source is not in this repository,
+and the binaries from [synapse-mcp.dev](https://synapse-mcp.dev) are not covered
+by the MIT License. Use is governed by the
+[Terms of Service](https://synapse-mcp.dev/terms).
+
+Synapse is **free to use** on the Golden Graph tier — free is a price, not a
+license. See [Pricing](#pricing).
 
 ---
 
