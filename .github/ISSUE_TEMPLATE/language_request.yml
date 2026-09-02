@@ -1,0 +1,34 @@
+name: Language Support Request
+description: Request support for a programming language not yet indexed
+title: '[Language]: '
+labels: ['language-support']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Synapse currently supports 50+ languages. If yours isn't on the list, let us know — we add languages on request.
+
+  - type: input
+    id: language
+    attributes:
+      label: Which language do you need?
+      placeholder: 'Zig, Nim, Crystal, etc.'
+    validations:
+      required: true
+
+  - type: input
+    id: repo
+    attributes:
+      label: Example repository (optional)
+      description: A repo you'd like to index with Synapse — helps us test the parser
+      placeholder: 'https://github.com/...'
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: How would you use Synapse with this language?
+      description: What queries, refactoring, or analysis would you run?
+    validations:
+      required: false

@@ -1,0 +1,53 @@
+name: Feature Request
+description: Suggest a new feature or improvement
+title: '[Feature]: '
+labels: ['enhancement']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Got an idea for making Synapse MCP better? We want to hear it.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: What are you trying to do that Synapse currently can't do, or does poorly?
+      placeholder: 'When I try to find all callers of a function across repos...'
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: What would the ideal solution look like?
+      description: Describe what you'd want to happen instead
+    validations:
+      required: true
+
+  - type: dropdown
+    id: tier
+    attributes:
+      label: Would this be a Free or Pro feature?
+      options:
+        - Free tier
+        - Pro tier
+        - Not sure
+    validations:
+      required: false
+
+  - type: input
+    id: agent
+    attributes:
+      label: Which AI agent would you use this with?
+      placeholder: 'Claude Code, Cursor, etc.'
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      options:
+        - label: I have searched existing issues to make sure this isn't a duplicate
+          required: true

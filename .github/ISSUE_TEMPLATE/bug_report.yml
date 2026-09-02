@@ -1,0 +1,86 @@
+name: Bug Report
+description: Report something that's broken or not working as expected
+title: '[Bug]: '
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. The more detail you give, the faster we can fix it.
+
+  - type: input
+    id: version
+    attributes:
+      label: Synapse MCP Version
+      description: Run `synapse-mcp --version` and paste the output
+      placeholder: '3.14.0'
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      options:
+        - macOS (Intel)
+        - macOS (Apple Silicon)
+        - Linux (x86_64)
+        - Linux (arm64)
+        - Windows
+    validations:
+      required: true
+
+  - type: input
+    id: agent
+    attributes:
+      label: Which AI agent are you using?
+      description: e.g., Claude Code, Cursor, Windsurf, Copilot, Cline, Aider
+      placeholder: 'Claude Code'
+    validations:
+      required: true
+
+  - type: input
+    id: language
+    attributes:
+      label: Which programming language(s) were indexed?
+      placeholder: 'Elixir, TypeScript, Python'
+    validations:
+      required: false
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the bug. What did you expect to happen? What actually happened?
+      placeholder: 'I ran synapse-mcp register on my repo and...'
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or error output
+      description: Paste any relevant log output or error messages
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Minimal steps to reproduce the issue
+      placeholder: |
+        1. Install Synapse MCP
+        2. Register repo
+        3. Run query...
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      options:
+        - label: I have checked that this bug hasn't already been reported
+          required: true
