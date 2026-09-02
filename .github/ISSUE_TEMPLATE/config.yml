@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Synapse MCP Documentation
+    url: https://synapse-mcp.dev
+    about: Read the docs, blog posts, and benchmarks before opening an issue.
+  - name: Discussions
+    url: https://github.com/myelixlabs/synapse-mcp/discussions
+    about: Ask questions, share ideas, or discuss how you're using Synapse MCP.
