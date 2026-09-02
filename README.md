@@ -21,11 +21,15 @@
 [![MCP Compatible](https://img.shields.io/badge/MCP-compatible-a45cff?style=flat-square)](https://modelcontextprotocol.io)
 [![Languages](https://img.shields.io/badge/Languages-50%2B-white?style=flat-square)](https://synapse-mcp.dev/languages)
 [![100% Local](https://img.shields.io/badge/100%25%20Local-No%20cloud-ff6b6b?style=flat-square)](#local-first-always)
+[![Preview](https://img.shields.io/badge/Currently%20in%20Preview-Feedback%20welcome-f59e0b?style=flat-square)](https://github.com/myelixlabs/synapse-mcp/issues)
 [![Zero Data Egress](https://img.shields.io/badge/Zero%20Data%20Egress-Privacy%20first-f5c542?style=flat-square)](#local-first-always)
 
 </div>
 
 ---
+
+> 🏗️ **Currently in Preview.** Synapse MCP is actively evolving — this is an early look at the code-intelligence layer we're building. We want your feedback. [Open an issue](https://github.com/myelixlabs/synapse-mcp/issues/new/choose), tell us what breaks, what's missing, and what would make you switch from grep for good.
+
 
 Synapse MCP is a **free, 100% local MCP server** that converts your codebase into a persistent, on-device AST knowledge graph. Claude, Cursor, Copilot, and every MCP-compatible agent gets exact caller trees, semantic search, and zero-hallucination refactoring — at **60% lower token spend** than shell tools. **Your code never leaves your machine.**
 
