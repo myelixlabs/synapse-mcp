@@ -14,7 +14,7 @@
 
 # Synapse MCP Server
 
-**Your structural brain for your coding AI agents.**
+**A persistent code-knowledge graph for AI agents. Runs locally. Writes safely.**
 
 [![Free](https://img.shields.io/badge/Free-forever-22c55e?style=flat-square)](https://synapse-mcp.dev)
 [![Pro](https://img.shields.io/badge/Pro-%2419%2Fmo-2ef2ff?style=flat-square)](https://synapse-mcp.dev/pro)
@@ -28,10 +28,11 @@
 
 ---
 
-> 🏗️ **Currently in Preview.** Synapse MCP is actively evolving — this is an early look at the code-intelligence layer we're building. We want your feedback. [Open an issue](https://github.com/myelixlabs/synapse-mcp/issues/new/choose), tell us what breaks, what's missing, and what would make you switch from grep for good.
+> 🏗️ **Currently in Preview.** Synapse MCP is actively evolving. We want your feedback — [open an issue](https://github.com/myelixlabs/synapse-mcp/issues/new/choose) to tell us what breaks, what's missing, or what would make you switch from grep for good.
 
+---
 
-Synapse MCP is a **free, 100% local MCP server** that converts your codebase into a persistent, on-device AST knowledge graph. Claude, Cursor, Copilot, and every MCP-compatible agent gets exact caller trees, semantic search, and zero-hallucination refactoring — at **60% lower token spend** than shell tools. **Your code never leaves your machine.**
+Synapse MCP is a **free, 100% local MCP server** that turns your codebase into a persistent, in-memory AST knowledge graph. Claude, Cursor, Copilot, and every MCP-compatible agent gets exact caller trees, semantic search, safe atomic writes, and diff-aware change review — without a single byte of your code leaving the machine.
 
 ```sh
 # Linux / macOS
@@ -43,13 +44,13 @@ irm https://downloads.synapse-mcp.dev/install.ps1 | iex
 
 ---
 
-## What is Synapse MCP?
+## What Synapse actually does
 
-If you've used AI coding assistants — Claude, Copilot, Cursor, Devin — you've probably noticed they spend a lot of time *finding* code before they can *change* it. They grep files, read imports, search for function names, open file after file. That exploration is expensive: it burns tokens, takes time, and the agent still sometimes gets it wrong.
+Most code-graph tools stop at discovery: index the codebase, answer questions about it, done. Synapse goes further.
 
-**Synapse MCP is the fix for that.**
+It runs as a **persistent BEAM daemon** — not a CLI you invoke, but a long-lived process that keeps your graph in memory across sessions. It watches files for changes automatically (inotify / FSEvents / kqueue) and re-indexes only the changed files, not the whole workspace. When you pull new commits it detects the new Git HEAD and re-indexes only the diff.
 
-It is an **MCP server** — a background process that connects to your AI agent and gives it a new set of tools. Instead of a file system and a search box, Synapse gives your agent a **pre-built knowledge graph of your entire codebase**: every function, every class, every call relationship, every module boundary — indexed, structured, and ready to query in milliseconds.
+On top of that it adds what no competitor offers: **safe write capability**. Before any proposed edit touches disk, Synapse simulates it in memory, validates it against the compiler and linter, maps the blast radius, and only commits atomically on passing every gate. If anything fails it rolls back. Your files are never left broken.
 
 ### In plain terms
 
@@ -76,27 +77,25 @@ You don't change how your agent works. You don't change your workflow. You insta
 
 ---
 
-## Local First. Always.
+### What your agent gets
 
-> 🔒 **Your code never leaves your machine.** Synapse runs entirely on your hardware — no cloud indexing, no API calls with your source, no telemetry, no vendor lock-in.
-
-Most code intelligence tools send your code to a cloud service to build their index. Synapse does not. The full AST graph — every function, every edge, every embedding — is built and stored locally in a persistent on-device store. When the graph is ready, your agents query it directly over MCP. Nothing goes out.
-
-This matters for:
-- **Enterprise & regulated environments** — source code stays inside your perimeter
-- **Open source contributors** — your unreleased work stays unreleased
-- **Anyone who values speed** — local graph queries have sub-millisecond latency. No network round-trip, ever.
+| Tool group | What it does |
+|---|---|
+| `ask_synapse` | Natural-language entry point — routes to the right tool automatically |
+| `synapse_get_context` | Pre-built structural slices: callers, callees, contracts, summaries |
+| `synapse_search_codebase` | Semantic (BM25F + embeddings), symbol, and regex — structured chunk IDs, not file dumps |
+| `synapse_explore_graph` | Transitive caller / callee traversal, cycle detection, context |
+| `synapse_modify_files` | Simulate → validate → write atomically → rollback on lint failure |
+| `synapse_change_review` | Diff analysis, blast-radius ranking, broken-contract detection |
+| `synapse_debug_trace` | Stack trace → AST root cause → reproducing test suggestions |
+| `synapse_test_quality` | Coverage bands, test mapping, ranked gap targets |
+| `synapse_codebase_insights` | Dead-code deletion safety, public API surface, dependency graph, refactor opportunities |
+| `synapse_knowledge_cache` | Persistent summaries and retrieval reinforcement across sessions |
+| `synapse_manage_repos` | Multi-repo registry — register, archive, restore; Git worktree support |
 
 ---
 
-## Why Synapse?
-
-Standard agents grep text. Synapse serves **compressed structural slices** from a pre-built AST graph — callers, callees, coverage gaps, contracts, and summaries — in a single MCP call.
-
-> *"Four tool calls. Zero file reads. Zero grepping. With Synapse the agent spends tokens on the actual task — not on exploration."*
-> — from the Synapse benchmark report
-
-### Benchmark — Autonomous Security Audit · 500k LOC Codebase · Same Frontier Model
+## Benchmark — Autonomous Security Audit · 500k LOC · Same Frontier Model
 
 | Metric | Synapse vs. shell tools |
 |---|---|
@@ -106,7 +105,65 @@ Standard agents grep text. Synapse serves **compressed structural slices** from 
 | Accuracy | **100% — identical** |
 | Data sent to cloud | **0 bytes** |
 
-*Fewer tool calls + no network latency = dramatically faster agent loops.*
+Fewer tool calls + no network latency = dramatically faster agent loops. The agent spends tokens on the actual task, not on exploration.
+
+---
+
+## Why not just use X?
+
+We get asked this a lot. Here is the honest answer, with source-verified facts.
+
+### "Why not Graphify?"
+
+Graphify is a Python CLI that extracts your codebase into a `graph.json` file. It is **read-only, file-based, and stateless**. Every query re-reads the JSON. There is no MCP server, no semantic search, no write safety, no multi-repo support, and no persistent memory. It is a good offline export tool. It is not a graph engine.
+
+### "Why not CodeGraph (colbymchenry)?"
+
+CodeGraph is a serious read-only tool with one capability Synapse does not match: **HTTP route-chain tracing** — following a URL through routing layers into the handler and template for 17 frameworks (Django, Rails, Express, Spring, etc.). If that specific capability is your entire use case, CodeGraph is worth evaluating.
+
+Everything else: CodeGraph has no semantic/vector search (FTS5 only), no write safety, no multi-repo support, no change review, no test mapping, no debug tracing, and no persistent memory. It exposes one MCP tool by default (`codegraph_explore`). It is per-project only.
+
+### "Why not code-graph-mcp (sdsrss)?"
+
+code-graph-mcp is the most technically sophisticated read-only alternative. It has a BLAKE3 Merkle-tree incremental indexer, hybrid BM25 + vector search via Reciprocal Rank Fusion, and 20 tree-sitter parsed languages. It is a well-engineered single binary.
+
+It is still **read-only**. No write safety, no change review, no multi-repo, no worktrees, no debug tracing. Its 20 languages versus Synapse's 50+ means no Elixir, Erlang, Haskell, OCaml, Scala, Solidity, COBOL, Zig, Gherkin, HCL, Protobuf, GraphQL, or SQL DDL. Its dependency auditing runs on a daily cron; Synapse's runs on every push and blocks the pipeline on failure.
+
+**The real difference** is that Synapse is the only one in this category that can actively prevent AI agents from breaking production. A tool that cannot write is a tool that cannot protect you from a write.
+
+---
+
+## 50+ Languages. One graph.
+
+AST-aware chunking and call-graph edge extraction — no plugins, no configuration, no cloud.
+
+`Elixir` `Python` `TypeScript` `JavaScript` `Go` `Rust` `OCaml` `Haskell` `F#` `Clojure` `Scala` `Java` `Kotlin` `Swift` `Objective-C` `C` `C++` `C#` `Ruby` `PHP` `Dart` `Zig` `Erlang` `Julia` `Groovy` `Solidity` `GraphQL` `HCL / Terraform` `Protobuf` `SQL DDL` `Gherkin` `Shell` `PowerShell` `Lua` `...and more`
+
+---
+
+## Local First. Always.
+
+> 🔒 **Your code never leaves your machine.** No cloud indexing, no API calls with your source, no telemetry, no vendor lock-in.
+
+The full AST graph — every function, every edge, every embedding — is built and stored locally in a persistent on-device store. Agents query it directly over MCP. Nothing goes out.
+
+This matters for:
+- **Enterprise & regulated environments** — source code stays inside your perimeter
+- **Open source contributors** — your unreleased work stays unreleased
+- **Anyone who values speed and accuracy** — local in-memory graph queries at sub-millisecond latency. No network round-trip, ever. No remote index that's out of date.
+
+---
+
+## Engineering
+
+Synapse is built to a production standard.
+
+- **Security audit on every push** — `mix deps.audit` runs in CI with `allow_failure: false`. A dependency vulnerability blocks the pipeline immediately, not within 24 hours.
+- **Multi-platform smoke tests** — every release candidate is built for Linux x86\_64/aarch64, Darwin x86\_64/aarch64, and Windows x86\_64, then exercised via real-process SSE smoke tests before it reaches R2.
+- **BDD end-to-end** — full Cucumber suite runs through the actual packaged binary boundary (Burrito + Rust launcher), not a mock.
+- **Signed release manifest** — the launcher verifies binary integrity against a cryptographically signed manifest before executing. A tampered binary does not start.
+- **Launcher version gate** — promotion is blocked if the launcher version hasn't been incremented correctly. A mis-versioned release cannot ship.
+- **Zero-latency file watching** — the indexer drains all pending file events from its mailbox in a single pass (no sleep, no fixed debounce) and detects new Git HEAD commits, re-indexing only the changed diff.
 
 ---
 
@@ -114,31 +171,18 @@ Standard agents grep text. Synapse serves **compressed structural slices** from 
 
 | Feature | Description |
 |---|---|
-| 🔒 **100% Local & Private** | The graph is built and stored on your machine. Zero cloud dependencies, zero data egress, zero network latency on queries |
-| ⚡ **Sub-millisecond Graph Queries** | Local in-memory store means responses are instant — no API round-trips eating into your agent's budget |
+| 🔒 **100% Local & Private** | Graph built and stored on your machine. Zero cloud dependencies, zero data egress, zero network latency on queries |
+| ⚡ **Sub-millisecond Graph Queries** | In-memory ETS store — reads are direct table lookups with no I/O |
 | 🚀 **SmartCrusher Compression** | Responses auto-minified 30–60%: short keys, stripped nulls, relativised paths. Outline mode strips bodies — scan 20+ files at a fraction of the token cost |
-| **Three Search Modes** | Semantic (plain English), symbol lookup, and full PCRE regex — all returning structured chunk IDs, not raw file dumps |
-| **Transitive Caller Graph** | Know every direct and transitive caller of any function before touching a line of code. Configurable depth, confidence scores, edge labels |
-| **Safe Atomic Writes** | Simulate edits in memory, map the blast radius, write atomically, and auto-rollback on lint failure. Your file is never left broken |
-| **Instant Crash Resolution** | Paste a stack trace, get root-cause analysis mapped to your AST graph — with reproducing test suggestions. No runtime needed |
+| **Three Search Modes** | Semantic (BM25F + random-projection embeddings, in-process, zero external ML runtime), symbol lookup, and PCRE regex |
+| **Transitive Caller Graph** | Every direct and transitive caller of any function. Configurable depth, confidence scores, edge labels, production vs. test caller splitting |
+| **Safe Atomic Writes** | Simulate edits in memory, validate against the compiler and linter, write atomically, auto-rollback on failure. Files are never left broken |
+| **Instant Crash Resolution** | Stack trace → root-cause analysis mapped to your AST → reproducing test suggestions |
 | **Change Review & Impact** | Feed a diff or commit range. Get ranked blast radius, broken contracts, tests to run, and blind spots — before you push |
-| **Persistent Agent Memory** | Summaries written in one session survive to the next. The more you use Synapse, the smarter your codebase model becomes |
+| **Persistent Agent Memory** | Summaries written in one session are available in the next. Retrieval reinforcement improves result ranking from real usage |
 | **Test Intelligence** | Coverage bands, test mapping, and ranked test targets — derived from the graph without executing your test suite |
-| **Codebase X-Ray** | Language detection, public API surface, dead-code deletion safety, inter-module dependency graph, contract scanning, and refactor opportunities in one call |
-
----
-
-## Language Support
-
-50+ languages. One graph. Supports 100s of repos. AST-aware chunking and dependency edge extraction for every mainstream language — no plugins, no configuration, no cloud.
-
-`Elixir` `Python` `TypeScript` `JavaScript` `Go` `Rust` `OCaml` `Haskell` `F#` `Clojure` `Scala` `Java` `Kotlin` `Swift` `C` `C++` `C#` `Ruby` `PHP` `Dart` `Zig` `Erlang` `Julia` `Groovy` `Solidity` `GraphQL` `HCL / Terraform` `Protobuf` `SQL` `Shell` `PowerShell` `Lua` `...and more`
-
----
-
-## Installation
-
-See [Quick Start](#quick-start) below, or visit [synapse-mcp.dev/download](https://synapse-mcp.dev/download) for the full guide and GUI installer.
+| **Codebase X-Ray** | Language detection, public API surface, dead-code deletion safety, inter-module dependency graph, contract scanning, refactor opportunities |
+| **Multi-repo & Git Worktrees** | Register multiple repos. Run parallel sub-agents in Git worktrees — each gets delta indexing against the parent index, no full re-index per worktree |
 
 ---
 
@@ -148,7 +192,7 @@ See [Quick Start](#quick-start) below, or visit [synapse-mcp.dev/download](https
 
 | Feature | Details |
 |---|---|
-| **AST Indexing** | 10,000+ files across 50 languages in seconds |
+| **AST Indexing** | 10,000+ files across 50+ languages |
 | **Search** | Semantic, symbol & regex — structured results, not file dumps |
 | **Caller Graph** | Transitive caller & callee traversal with confidence scores |
 | **Codebase Insights** | API surface, deletion safety, dependency graph & refactor candidates |
@@ -187,343 +231,21 @@ When an agent (or you) explains what a function does — `"This handles Stripe w
 Every time a search returns a useful result and the agent uses it, Synapse silently records the association: *"when someone asks X, chunk Y was the right answer."* Over time, the most useful results for common queries bubble up to the top automatically — without anyone manually tuning anything. This is retrieval reinforcement: the graph improves its own ranking from real usage.
 
 **3. Explicit promotion**
-If a result is particularly important, you can tell Synapse directly: *"for queries about payment processing, always surface this chunk first."* That instruction is stored locally and honoured in every future session.
-
-**4. Gap detection**
-Synapse tracks which parts of your codebase get queried most but have no explanation attached. It can surface these gaps on demand — so you know exactly where a five-minute annotation would have the biggest impact on future agent sessions.
-
-The result is a codebase model that compounds. The graph grows richer, the rankings get sharper, and agents spend less time re-exploring what's already been understood.
-
-> 🔒 The learning layer is entirely local. No queries, no summaries, and no usage signals ever leave your machine.
-
-> ✨ **The learning and memory system is a Pro feature.** It's where we invested the most original engineering work — building a feedback loop that makes every subsequent agent session measurably faster.
+If a result is particularly important, you can tell Synapse directly: *"for queries about payment processing, always surface this chunk first."* That instruction is stored and applied on every subsequent query.
 
 ---
 
-## MCP Tool Reference
+## Installation
 
-Synapse exposes **13 precision tools** over the Model Context Protocol. All tools accept a `compress_payload` flag (default `true`) that enables SmartCrusher compression — 30–60% fewer response tokens at zero information loss.
-
-Tools marked **`FREE`** are available on all plans. Tools marked **`PRO`** require a [Pro subscription](https://synapse-mcp.dev/pro) ($19/mo). Pro features are where the truly unique engineering lives — safe atomic writes with rollback, session-to-session learning, crash resolution, and change impact analysis.
-
----
-
-### `ask_synapse` — `FREE`
-
-**The default natural-language entry point.** Send any codebase question or task in plain English. Synapse routes it to the optimal underlying tool, returns safe `next_tool_calls` to follow, and reports a `completion_state` plus `agent_instruction` so you always know what to do next.
-
-Use this first for virtually every task — code exploration, deletion-safety checks, editing, debugging, test analysis, and administration. For "can I delete X?", "is X still used?", or "should I keep X?", include `inputs.chunk_id` when known; otherwise include `repo_id` plus an arity-qualified exact symbol in `inputs.symbol`. If the user gives only descriptive prose, ask for the concrete symbol or show candidates instead of guessing.
-
-```json
-{ "query": "Where is the retry logic for the payment service?", "repo_id": "my-org/my-repo" }
-```
-
----
-
-### `synapse_search_codebase` — `FREE`
-
-**Find code by meaning, name, or pattern.** Three search modes in one tool:
-
-| Action | Description |
-|---|---|
-| `semantic` | Plain-English similarity search over chunk embeddings. *"Find all places that handle auth errors"* |
-| `symbol` | Exact named-symbol lookup by function, class, module, or type name |
-| `regex` | Full PCRE in-memory grep across the indexed graph. Returns chunk IDs, line numbers, and tags — not raw text |
-
-```json
-{ "action": "symbol", "query": "PaymentService", "repo_id": "my-org/my-repo" }
-```
-
----
-
-### `synapse_explore_graph` — `FREE`
-
-**Navigate relationships around any chunk.** Given a chunk ID (from any search result), traverse the AST dependency graph in any direction.
-
-| Action | Description |
-|---|---|
-| `callers` | Every direct and transitive caller of a function, with configurable depth and confidence scores |
-| `callees` | All functions/modules called by a given chunk |
-| `context` | Rich neighbourhood — callers, callees, sibling definitions, and related chunks |
-| `cycles` | Detect circular dependency chains in the graph |
-
-Use this before touching any function to understand its full blast radius.
-
-```json
-{ "action": "callers", "chunk_id": "abc123", "depth": 3 }
-```
-
----
-
-### `synapse_get_context` — `FREE`
-
-**Advanced context gathering for editing, onboarding, and explanation.**
-
-| Action | Description |
-|---|---|
-| `find` | Open-ended semantic research — parallel semantic + exact + fuzzy + graph traversal in one call |
-| `edit` | Pre-edit safety pack: callers, callees, must-read files, likely tests, and risk assessment for a planned change |
-| `explain` | Plain-English explanation of what a specific chunk does |
-| `onboard` | Guided reading order for a subsystem — optimal for understanding unfamiliar code |
-
-```json
-{ "action": "edit", "intent": "Refactor the caching layer to use Redis", "repo_id": "my-org/my-repo" }
-```
-
----
-
-### `synapse_inspect_files` — `FREE`
-
-**Read source files and chunks with structural awareness.**
-
-| Action | Description |
-|---|---|
-| `read_files` | Read files with optional line ranges and `format: "outline"` (strips bodies, keeps signatures — 60–80% fewer tokens) |
-| `read_chunk` | Read a single chunk by ID directly from the in-memory store — instant, no disk I/O |
-| `count_lines` | Count total indexed lines across the workspace |
-
-Pass `format: "outline"` to scan 20+ files at a fraction of the token cost. Use `format: "full"` only when you need complete implementations.
-
-```json
-{ "action": "read_files", "files": [{ "path": "lib/my_module.ex", "ranges": ["45-80"] }], "format": "outline" }
-```
-
-> ⚠️ **Linting workflows:** Pass `compress_payload: false` when reading files to investigate whitespace or formatting violations. SmartCrusher strips trailing whitespace before returning content, which can hide the very violations you are trying to fix.
-
----
-
-### `synapse_modify_files` — `PRO`
-
-**Edit code with safety guarantees — lint-validated and atomically rolled back on failure.**
-
-This is one of the features we're most proud of. Vanilla file writes from an agent are dangerous — a failed linter means a broken file, a half-written function, or a commit that doesn't build. `write_safely` eliminates that entire class of failure by simulating the edit in memory, running your project's own linter against it, and only committing the bytes to disk if validation passes. If anything fails, the original file is untouched.
-
-| Action | Tier | Description |
-|---|---|---|
-| `write_safely` | **PRO** | Simulate, lint-validate, write atomically. Auto-rollback on failure — your file is never left broken |
-| `find_and_replace` | **PRO** | Global find-and-replace across the indexed graph with pattern matching |
-| `delete_chunk` | **PRO** | Remove a chunk from the graph/index. It is not source deletion guidance; use `dead_code` evidence before making any source-removal decision |
-
-Always pair with `synapse_get_context` (`edit`) first to understand callers and impact.
-
-```json
-{ "action": "write_safely", "path": "lib/my_module.ex", "content": "..." }
-```
-
----
-
-### `synapse_change_review` — `PRO`
-
-**Review diffs and assess blast radius before pushing.**
-
-Before you push, Synapse maps every chunk your diff touches, ranks the risk, identifies broken contracts, and tells you which tests to run. This replaces a manual code review pass that typically takes 20–40 minutes for a medium-sized change.
-
-| Action | Description |
-|---|---|
-| `analyse_diff` | Structural analysis of a diff: which chunks changed, what they affect |
-| `review_diff` | Full review: ranked risk scores, blind spots, broken contracts, recommended tests to run |
-| `impact` | Post-edit blast radius check — verify what a committed change touches |
-
-Feed a raw diff string or a commit range. Get actionable output before you push.
-
-```json
-{ "action": "review_diff", "diff": "..." }
-```
-
----
-
-### `synapse_codebase_insights` — `FREE`
-
-**Codebase-level analysis in a single call.** Use the `dead_code` action, normally through `ask_synapse`, when an agent needs function-level evidence about whether one exact symbol or chunk is still used or safe to delete.
-
-| Action | Description |
-|---|---|
-| `detect` | Language detection across the workspace |
-| `public_api` | Extract the full public API surface of a module or the entire codebase |
-| `dead_code` | Read-only function-level deletion-safety check: `chunk_id` or arity-qualified symbol input, production callers, test callers, confidence, caveats, and `safe_to_delete` |
-| `contracts` | Scan for interface/behaviour/protocol contracts and their implementations |
-| `dependencies` | Inter-module dependency graph — who imports whom |
-| `overview` | Consolidated high-level overview of the codebase architecture |
-| `refactor_opportunities` | Identify hotspots: duplicated logic, bloated modules, tight coupling |
-
-```json
-{ "action": "overview", "repo_id": "my-org/my-repo" }
-```
-
-Deletion-safety questions should normally enter through `ask_synapse` so routing, missing-input guidance, and `agent_instruction` are preserved:
-
-```json
-{
-  "query": "Can I delete this chunk?",
-  "repo_id": "my-org/my-repo",
-  "inputs": { "chunk_id": "my-org/my-repo:lib/parser.ex:120" }
-}
-```
-
-```json
-{
-  "query": "Is Parser.parse/2 still used?",
-  "repo_id": "my-org/my-repo",
-  "inputs": { "symbol": "Parser.parse/2" }
-}
-```
-
-If no `chunk_id` is available, pass `repo_id` plus an arity-qualified symbol such as `Parser.parse/2`; descriptive prose should produce clarification or candidates, not a guessed deletion decision.
-
-Interpret `dead_code` by reading `preferred_identifier`, `valid_input_patterns`, `scope`, `clause_level_analysis`, `safe_to_delete`, `deletion_risk`, `confidence`, `caveats`, and `supporting_evidence.production_callers` / `supporting_evidence.test_callers`. `dead_code` is function-level; clause-level reachability is currently reported as unsupported. Production callers mean keep it; test-only callers and unknown visibility should be presented as caution, not automatic deletion.
-
----
-
-### `synapse_test_quality` — `PRO`
-
-**Test discovery and coverage analysis — no test runner required.**
-
-Derives test coverage and gaps directly from the AST graph — without running a single test. This is particularly powerful for large codebases where a full test suite takes minutes to execute. Synapse tells you what's covered, what isn't, and where to focus next, in seconds.
-
-| Action | Description |
-|---|---|
-| `coverage` | Coverage band analysis — which functions are tested, which have gaps |
-| `find_tests` | Locate tests related to a specific symbol or file, confidence-ranked |
-| `recommend_test_targets` | Ranked list of functions most in need of testing based on the graph |
-| `setup_trunk` | Configure Trunk for linting integration |
-
-```json
-{ "action": "find_tests", "symbol": "PaymentService.charge" }
-```
-
----
-
-### `synapse_debug_trace` — `PRO`
-
-**Debugging and execution tracing directly from the AST graph.**
-
-Paste a raw stack trace and get back a root-cause analysis that maps each frame directly to your indexed chunks — with a suggested reproducing test and the call chain that led there. No runtime, no debugger, no re-running the failure scenario.
-
-| Action | Description |
-|---|---|
-| `resolve_stack` | Paste a stack trace; get root-cause analysis mapped to your graph with reproducing test suggestions. No runtime needed |
-| `trace_behaviour` | Trace the execution path of a behaviour or callback through the graph |
-
-```json
-{ "action": "resolve_stack", "stack_trace": "..." }
-```
-
----
-
-### `synapse_knowledge_cache` — `PRO`
-
-**The learning and reinforcement layer. Persistent knowledge that survives across sessions.**
-
-This is Synapse's most unique capability. See [Synapse Learns From Every Session](#synapse-learns-from-every-session) for a plain-English explanation of how it works.
-
-| Action | Description |
-|---|---|
-| `save_summary` | Attach a plain-English description to a chunk. Every future query hitting that chunk gets your explanation for free |
-| `query` | Search the cache by intent — retrieve promoted results from previous sessions |
-| `learn` | Explicitly promote a chunk for a query, immediately improving future result ranking |
-| `suggest` | Find high-traffic chunks that lack summaries — investing here improves all future sessions |
-
-```json
-{ "action": "save_summary", "chunk_id": "abc123", "summary": "Handles Stripe webhook validation and idempotency checks." }
-```
-
----
-
-### `synapse_manage_repos` — `FREE`
-
-**Register, list, and manage repositories in the Synapse graph.**
-
-| Action | Description |
-|---|---|
-| `list` | List all registered repositories with indexing status |
-| `register` | Register a new repository root. Automatically detects Git worktrees for delta-only indexing |
-| `archive` | Pause indexing for a repo without removing its data |
-| `restore` | Re-activate an archived repository |
-| `keep` | Dismiss a dirty-merged worktree advisory and keep the overlay as-is |
-| `unregister` | Remove a repository from the graph entirely |
-| `update_excludes` | Update glob patterns to exclude paths from indexing |
-
-```json
-{ "action": "register", "path": "/path/to/my-repo" }
-```
-
----
-
-### `synapse_indexer_control` — `FREE`
-
-**Health checks and indexer administration.**
-
-| Action | Description |
-|---|---|
-| `status` | Current indexing phase, file counts, embedding readiness, and per-repo status |
-| `health` | System health check — confirms the server is up and the graph store is accessible |
-| `trigger` | Manually trigger a re-index for a specific repository |
-
-```json
-{ "action": "status", "repo_id": "my-org/my-repo" }
-```
-
----
-
-### `synapse_capability_manifest` — `FREE`
-
-**Self-documenting tool surface.** Returns the full list of available tools, actions, and parameters for the running Synapse version. Useful for agents bootstrapping a new session or checking what features are available on the connected server.
-
-```json
-{}
-```
-
----
-
-## Git Worktree Support
-
-Synapse supports **Git worktrees** transparently via the **Virtual Worktree Overlay (VWO)**:
-
-- **Delta Indexing** — only modified/added/deleted files are re-indexed. Near-instant (< 50ms).
-- **Overlay Priority** — worktree chunks shadow parent repo chunks automatically.
-- **Parallel Agent Workflows** — spawn multiple sub-agents in separate worktrees without duplicating the main index.
-
----
-
-## Works Everywhere
-
-Synapse implements the open [Model Context Protocol](https://modelcontextprotocol.io). If your tool speaks MCP, it works with Synapse.
-
-**IDEs & Editors:** Cursor · Windsurf · VS Code · Zed · JetBrains AI
-
-**Agents:** Claude Code · GitHub Copilot · Devin · Aider · Cline · Continue.dev · Replit Agent · Amazon Q · OpenHands · SWE-agent · Plandex · Antigravity
-
-**Tools:** Sourcegraph Cody · Qodo · Tabnine
-
----
-
-## Quick Start
-
-**Full install guide & GUI installer:** [synapse-mcp.dev/download](https://synapse-mcp.dev/download)
-
-### Linux / macOS
+See [synapse-mcp.dev/download](https://synapse-mcp.dev/download) for the full guide and GUI installer.
 
 ```sh
+# Linux / macOS
 curl -fsSL https://downloads.synapse-mcp.dev/install.sh | sh
+
+# Windows PowerShell
+irm https://downloads.synapse-mcp.dev/install.ps1 | iex
 ```
-
-> Downloads and runs the install script — [inspect it first](https://downloads.synapse-mcp.dev/install.sh)
-
-### Windows
-
-```powershell
-powershell -c "irm https://downloads.synapse-mcp.dev/install.ps1 | iex"
-```
-
-> Run from PowerShell — [inspect the script first](https://downloads.synapse-mcp.dev/install.ps1)
-
-The installer auto-detects your MCP client (Cursor, Claude Code, Windsurf, VS Code, etc.) and writes the correct config.
-
----
-
-## Privacy
-
-**100% local.** Synapse runs entirely on your machine. No code leaves your environment, no cloud dependencies, no data egress. Your codebase stays yours.
 
 ---
 
@@ -570,11 +292,11 @@ Synapse Pro subscribers will get early access. [Join the waitlist →](https://s
 
 ## Support
 
-**Need help?** [Open an issue](../../issues) and we'll get back to you. Bug reports, feature requests, and integration questions are all welcome.
+**Need help?** [Open an issue](https://github.com/myelixlabs/synapse-mcp/issues) and we'll get back to you. Bug reports, feature requests, and integration questions are all welcome.
 
-- 🐛 [Report a bug](../../issues/new?template=bug_report.md)
-- 💡 [Request a feature](../../issues/new?template=feature_request.md)
-- 💬 [Ask a question](../../issues/new?template=question.md)
+- 🐛 [Report a bug](https://github.com/myelixlabs/synapse-mcp/issues/new/choose)
+- 💡 [Request a feature](https://github.com/myelixlabs/synapse-mcp/issues/new/choose)
+- 💬 [Ask a question](https://github.com/myelixlabs/synapse-mcp/issues/new/choose)
 
 ---
 
