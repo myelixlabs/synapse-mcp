@@ -249,4 +249,66 @@ irm https://downloads.synapse-mcp.dev/install.ps1 | iex
 
 ---
 
-*[Open an issue](https://github.com/myelixlabs/synapse-mcp/issues/new/choose) · [synapse-mcp.dev](https://synapse-mcp.dev)*
+## Contributing — Help Agents Use Synapse Better
+
+> **This is the highest-leverage contribution you can make.**
+
+LLMs are trained on billions of lines of code where developers reach for `grep`, `find`, `cat`, and `ls` to explore a codebase. That muscle memory is baked into the model weights. When an agent is dropped into a new project, its first instinct is to grep — even when a smarter, cheaper tool is available.
+
+Synapse ships a set of **agent skill files** (`.agents/skills/synapse-mcp/SKILL.md`, `AGENTS.md`) that agents load at session start. These files override the grep instinct by giving agents explicit routing rules, anti-patterns, and example tool calls. They are, in effect, **runtime training for the meta-layer** — teaching agents *how* to use the tools they have, not just what the tools do.
+
+**The problem:** We can only write what we observe. You may have seen failure modes, routing gaps, or phrasing that your specific agent ignores. We haven't. The skill files improve dramatically with real-world usage reports.
+
+### What we'd love your help with
+
+| Area | What to contribute |
+|---|---|
+| **Anti-patterns** | Agent behaviours you've seen that Synapse should suppress (e.g. "my agent still greps even after loading the skill") |
+| **Routing rules** | Cases where an agent picked the wrong Synapse tool — what was the query, what should it have done? |
+| **Phrasing that works** | If a specific instruction wording reliably stops your agent from falling back to grep, share it |
+| **Agent-specific quirks** | Claude, GPT-4o, Gemini, and Copilot all have different tendencies. Agent-specific `AGENTS.md` sections help enormously |
+| **New tool examples** | Concrete JSON examples for actions that aren't yet covered in the skill |
+| **Missing workflows** | Scenarios (debugging, onboarding, large refactors) where the skill gives no guidance |
+
+### How to contribute
+
+1. **Open an issue** — describe the failure mode or gap you observed. Include the agent, the query, and what it did vs. what it should have done.
+2. **Open a PR** — edit [`AGENTS.md`](AGENTS.md) or [`.agents/skills/synapse-mcp/SKILL.md`](.agents/skills/synapse-mcp/SKILL.md) directly. Skill file PRs are reviewed and merged fast — they don't require tests.
+3. **Share a benchmark** — if you've run Synapse vs. shell tools on your own codebase and have numbers, we want to publish them.
+
+The skill files live at the repo root and in `.agents/`. They are plain Markdown — no Elixir knowledge required. If you can describe what went wrong, you can write the fix.
+
+---
+
+## What's Next — Myelix Agents · Coming Q3 2026
+
+Synapse gives your existing AI agents a precision map of your codebase. **Myelix Agents** is the next step: AI coding agents built from the ground up to *think* before they code.
+
+Where current agents react — reading a file, writing a change, hoping for the best — Myelix Agents plan. They maintain an explicit task model, reason about risk before touching code, incorporate learnings from previous sessions (via Synapse's knowledge graph), and course-correct when something goes wrong. Accuracy over speed. Thought over grep.
+
+Synapse Pro subscribers will get early access. [Join the waitlist →](https://synapse-mcp.dev)
+
+---
+
+## Support
+
+**Need help?** [Open an issue](https://github.com/myelixlabs/synapse-mcp/issues) and we'll get back to you. Bug reports, feature requests, and integration questions are all welcome.
+
+- 🐛 [Report a bug](https://github.com/myelixlabs/synapse-mcp/issues/new/choose)
+- 💡 [Request a feature](https://github.com/myelixlabs/synapse-mcp/issues/new/choose)
+- 💬 [Ask a question](https://github.com/myelixlabs/synapse-mcp/issues/new/choose)
+
+---
+
+## Links
+
+- 🌐 [synapse-mcp.dev](https://synapse-mcp.dev) — Website & docs
+- ⬇️ [Download & install guide](https://synapse-mcp.dev/download)
+- 📖 [Blog — technical deep-dives & benchmarks](https://synapse-mcp.dev/blog/index.html)
+- 🔒 [Privacy policy](https://synapse-mcp.dev/privacy)
+
+---
+
+<div align="center">
+  <sub>Built by <a href="https://myelixlabs.com">Myelix Labs</a> · Made with ♥ in 100% Elixir for AI engineers everywhere</sub>
+</div>
