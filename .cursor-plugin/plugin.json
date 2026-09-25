@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "author": {
     "name": "Myelix Labs",
-    "email": "hello@myelixlabs.com"
+    "email": "contact@myelixlabs.com"
   },
   "description": "Persistent AST knowledge graph and safe writes for AI coding agents across 50+ languages. 100% local \u2014 no cloud indexing, no telemetry.",
   "homepage": "https://synapse-mcp.dev",
