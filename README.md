@@ -269,7 +269,7 @@ What the separately installed Synapse server does over the network:
 
 LLMs are trained on billions of lines of code where developers reach for `grep`, `find`, `cat`, and `ls` to explore a codebase. That muscle memory is baked into the model weights. When an agent is dropped into a new project, its first instinct is to grep — even when a smarter, cheaper tool is available.
 
-Synapse ships a set of **agent skill files** (`.agents/skills/synapse-mcp/SKILL.MD` and the Cursor rules in `rules/synapse.mdc`) that agents load at session start. These files override the grep instinct by giving agents explicit routing rules, anti-patterns, and example tool calls. They are, in effect, **runtime training for the meta-layer** — teaching agents *how* to use the tools they have, not just what the tools do.
+Synapse ships a set of **agent skill files** (`.agents/skills/synapse-mcp/SKILL.MD`) that agents load at session start. These files override the grep instinct by giving agents explicit routing rules, anti-patterns, and example tool calls. They are, in effect, **runtime training for the meta-layer** — teaching agents *how* to use the tools they have, not just what the tools do.
 
 **The problem:** We can only write what we observe. You may have seen failure modes, routing gaps, or phrasing that your specific agent ignores. We haven't. The skill files improve dramatically with real-world usage reports.
 
@@ -287,10 +287,10 @@ Synapse ships a set of **agent skill files** (`.agents/skills/synapse-mcp/SKILL.
 ### How to contribute
 
 1. **Open an issue** — describe the failure mode or gap you observed. Include the agent, the query, and what it did vs. what it should have done.
-2. **Open a PR** — edit [`.agents/skills/synapse-mcp/SKILL.MD`](.agents/skills/synapse-mcp/SKILL.MD) or [`rules/synapse.mdc`](rules/synapse.mdc) directly. Skill file PRs are reviewed and merged fast — they don't require tests.
+2. **Open a PR** — edit [`.agents/skills/synapse-mcp/SKILL.MD`](.agents/skills/synapse-mcp/SKILL.MD) directly. Skill file PRs are reviewed and merged fast — they don't require tests.
 3. **Share a benchmark** — if you've run Synapse vs. shell tools on your own codebase and have numbers, we want to publish them.
 
-The skill files live in `.agents/skills/` and `skills/`, and the Cursor rules in `rules/`. They are plain Markdown — no Elixir knowledge required. If you can describe what went wrong, you can write the fix.
+The skill files live in `.agents/skills/` and `skills/`. They are plain Markdown — no Elixir knowledge required. If you can describe what went wrong, you can write the fix.
 
 The Claude plugin keeps its own copy of the skill at [`skills/synapse-mcp/SKILL.md`](skills/synapse-mcp/SKILL.md), because Claude only loads skills from `skills/`. It is the same file as `.agents/skills/synapse-mcp/SKILL.MD` minus the `allowed-tools` line. Keep it that way on purpose: in Claude Code, `allowed-tools` lets tools run without a permission prompt, and the plugin should not approve Synapse's write tools on the user's behalf. When you change the skill, copy the `.agents` file over the plugin copy and delete that one line.
 
