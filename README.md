@@ -292,6 +292,8 @@ Synapse ships a set of **agent skill files** (`.agents/skills/synapse-mcp/SKILL.
 
 The skill files live at the repo root and in `.agents/`. They are plain Markdown — no Elixir knowledge required. If you can describe what went wrong, you can write the fix.
 
+The Claude plugin keeps its own copy of the skill at [`skills/synapse-mcp/SKILL.md`](skills/synapse-mcp/SKILL.md), because Claude only loads skills from `skills/`. It is the same file as `.agents/skills/synapse-mcp/SKILL.MD` minus the `allowed-tools` line. Keep it that way on purpose: in Claude Code, `allowed-tools` lets tools run without a permission prompt, and the plugin should not approve Synapse's write tools on the user's behalf. When you change the skill, copy the `.agents` file over the plugin copy and delete that one line.
+
 ---
 
 ## What's Next — Myelix Agents · Coming Q3 2026
