@@ -1,0 +1,15 @@
+{
+  "name": "synapse-mcp",
+  "displayName": "Synapse MCP",
+  "version": "4.1.1",
+  "description": "Teaches Claude to use Synapse MCP, a local AST code-knowledge graph, for codebase navigation, caller tracing, safe lint-validated edits, and diff blast-radius review instead of grep and raw file reads.",
+  "author": {
+    "name": "Myelix Labs",
+    "email": "contact@myelixlabs.com",
+    "url": "https://synapse-mcp.dev"
+  },
+  "homepage": "https://synapse-mcp.dev",
+  "repository": "https://github.com/myelixlabs/synapse-mcp",
+  "license": "MIT",
+  "keywords": ["code-graph", "ast", "refactoring", "safe-writes", "code-review", "token-savings"]
+}

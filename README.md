@@ -249,6 +249,20 @@ irm https://downloads.synapse-mcp.dev/install.ps1 | iex
 
 ---
 
+## Claude plugin
+
+This repository is also a Claude plugin. It adds the `synapse-mcp` skill, which teaches Claude to use the Synapse tools before grep and raw file reads, and the `/synapse-mcp:synapse-setup` command, which checks that Synapse is installed, running, and connected to Claude Code.
+
+The plugin itself contains only Markdown and JSON. It does not bundle or start an MCP server, run hooks, or send any data anywhere. The Synapse tools come from the Synapse MCP server you install separately with the commands above, which registers itself with Claude Code on `127.0.0.1:8585`. Local MCP servers work in Claude Code and in Cowork sessions on your own computer; claude.ai chat loads the skill but cannot reach a local server.
+
+What the separately installed Synapse server does over the network:
+
+- Indexing, search, and edits run entirely on your machine. Your source code is never uploaded.
+- Signing in and checking your plan contacts `api.synapse-mcp.dev` with your account token.
+- Installing and updating downloads the Synapse binaries from `downloads.synapse-mcp.dev`.
+
+---
+
 ## Contributing — Help Agents Use Synapse Better
 
 > **This is the highest-leverage contribution you can make.**
