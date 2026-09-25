@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "synapse": {
-      "type": "http",
-      "url": "${user_config.synapse_url}"
-    }
-  }
-}

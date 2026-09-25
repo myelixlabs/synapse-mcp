@@ -21,6 +21,12 @@
     "code-review"
   ],
   "skills": "./.agents/skills/",
+  "mcpServers": {
+    "synapse": {
+      "type": "http",
+      "url": "${user_config.synapse_url}"
+    }
+  },
   "userConfig": {
     "synapse_url": {
       "type": "string",
