@@ -943,30 +943,3 @@ characteristics, relationships, and groupings. No action parameter needed.
 | `compress_payload` | boolean | `true` | Minify JSON response (short keys, prune empties). ON by default. Pass `false` to opt out. |
 | `repo_id` | string | — | Scope to a specific repository |
 
-## Legacy Tool Name Mapping
-
-If you encounter legacy tool names in documentation or prompts, use this mapping:
-
-| Legacy Name | Current Tool | Action |
-|---|---|---|
-| `synapse_fast_context` | `synapse_get_context` | `"find"` |
-| `synapse_edit_context` | `synapse_get_context` | `"edit"` |
-| `synapse_explain_chunk` | `synapse_get_context` | `"explain"` |
-| `synapse_onboarding_guide` | `synapse_get_context` | `"onboard"` |
-| `synapse_lookup_symbol` | `synapse_search_codebase` | `"symbol"` |
-| `synapse_semantic_search` | `synapse_search_codebase` | `"semantic"` |
-| `synapse_grep_source` | `synapse_search_codebase` | `"regex"` |
-| `synapse_find_callers` | `synapse_explore_graph` | `"callers"` |
-| `synapse_find_callees` | `synapse_explore_graph` | `"callees"` |
-| `synapse_chunk_context` | `synapse_explore_graph` | `"context"` |
-| `synapse_read_files` | `synapse_inspect_files` | `"read_files"` |
-| `synapse_read_chunk` | `synapse_inspect_files` | `"read_chunk"` |
-| `synapse_write_files_safely` | `synapse_modify_files` | `"write_safely"` |
-| `synapse_find_and_replace` | `synapse_modify_files` | `"find_and_replace"` |
-| `synapse_analyse_diff` | `synapse_change_review` | `"analyse_diff"` |
-| `synapse_review_diff` | `synapse_change_review` | `"review_diff"` |
-| `synapse_change_impact` | `synapse_change_review` | `"impact"` |
-| `synapse_trace_behaviour` | `synapse_debug_trace` | `"trace_behaviour"` |
-| `synapse_resolve_stack_trace` | `synapse_debug_trace` | `"resolve_stack"` |
-| `synapse_save_summary` | `synapse_knowledge_cache` | `"save_summary"` |
-| `synapse_record_useful_result` | `synapse_knowledge_cache` | `"learn"` |
