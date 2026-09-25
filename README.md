@@ -249,13 +249,29 @@ irm https://downloads.synapse-mcp.dev/install.ps1 | iex
 
 ---
 
+## Claude plugin
+
+This repository is also a Claude plugin. It adds the `synapse-mcp` skill, which teaches Claude to use the Synapse tools before grep and raw file reads, and the `/synapse-mcp:synapse-setup` command, which checks that Synapse is installed and running.
+
+The plugin contains only Markdown and JSON. It does not install or start the server, run hooks, or send any data anywhere itself. Its manifest points Claude at the Synapse MCP server you install separately with the commands above, at a URL you set when you enable the plugin. The default is `http://127.0.0.1:8585/mcp`, where Synapse listens on your machine. Claude Code asks for the URL and connects to it; Cowork sessions on your own computer use the default; claude.ai chat loads the skill but ignores the server, because it cannot reach your machine.
+
+If you connected Synapse to Claude Code earlier with `synapse-mcp setup ides configure claude-code`, remove that entry with `claude mcp remove synapse -s user`, otherwise the Synapse tools are listed twice.
+
+What the separately installed Synapse server does over the network:
+
+- Indexing, search, and edits run entirely on your machine. Your source code is never uploaded.
+- Signing in and checking your plan contacts `api.synapse-mcp.dev` with your account token.
+- Installing and updating downloads the Synapse binaries from `downloads.synapse-mcp.dev`.
+
+---
+
 ## Contributing — Help Agents Use Synapse Better
 
 > **This is the highest-leverage contribution you can make.**
 
 LLMs are trained on billions of lines of code where developers reach for `grep`, `find`, `cat`, and `ls` to explore a codebase. That muscle memory is baked into the model weights. When an agent is dropped into a new project, its first instinct is to grep — even when a smarter, cheaper tool is available.
 
-Synapse ships a set of **agent skill files** (`.agents/skills/synapse-mcp/SKILL.md`, `AGENTS.md`) that agents load at session start. These files override the grep instinct by giving agents explicit routing rules, anti-patterns, and example tool calls. They are, in effect, **runtime training for the meta-layer** — teaching agents *how* to use the tools they have, not just what the tools do.
+Synapse ships a set of **agent skill files** (`.agents/skills/synapse-mcp/SKILL.md`) that agents load at session start. These files override the grep instinct by giving agents explicit routing rules, anti-patterns, and example tool calls. They are, in effect, **runtime training for the meta-layer** — teaching agents *how* to use the tools they have, not just what the tools do.
 
 **The problem:** We can only write what we observe. You may have seen failure modes, routing gaps, or phrasing that your specific agent ignores. We haven't. The skill files improve dramatically with real-world usage reports.
 
@@ -266,17 +282,17 @@ Synapse ships a set of **agent skill files** (`.agents/skills/synapse-mcp/SKILL.
 | **Anti-patterns** | Agent behaviours you've seen that Synapse should suppress (e.g. "my agent still greps even after loading the skill") |
 | **Routing rules** | Cases where an agent picked the wrong Synapse tool — what was the query, what should it have done? |
 | **Phrasing that works** | If a specific instruction wording reliably stops your agent from falling back to grep, share it |
-| **Agent-specific quirks** | Claude, GPT-4o, Gemini, and Copilot all have different tendencies. Agent-specific `AGENTS.md` sections help enormously |
+| **Agent-specific quirks** | Claude, GPT, Gemini, and Copilot all have different tendencies. Agent-specific sections in the skill file help enormously |
 | **New tool examples** | Concrete JSON examples for actions that aren't yet covered in the skill |
 | **Missing workflows** | Scenarios (debugging, onboarding, large refactors) where the skill gives no guidance |
 
 ### How to contribute
 
 1. **Open an issue** — describe the failure mode or gap you observed. Include the agent, the query, and what it did vs. what it should have done.
-2. **Open a PR** — edit [`AGENTS.md`](AGENTS.md) or [`.agents/skills/synapse-mcp/SKILL.md`](.agents/skills/synapse-mcp/SKILL.md) directly. Skill file PRs are reviewed and merged fast — they don't require tests.
+2. **Open a PR** — edit [`.agents/skills/synapse-mcp/SKILL.md`](.agents/skills/synapse-mcp/SKILL.md) directly. Skill file PRs are reviewed and merged fast — they don't require tests.
 3. **Share a benchmark** — if you've run Synapse vs. shell tools on your own codebase and have numbers, we want to publish them.
 
-The skill files live at the repo root and in `.agents/`. They are plain Markdown — no Elixir knowledge required. If you can describe what went wrong, you can write the fix.
+The skill files live in `.agents/skills/`. They are plain Markdown — no Elixir knowledge required. If you can describe what went wrong, you can write the fix.
 
 ---
 
