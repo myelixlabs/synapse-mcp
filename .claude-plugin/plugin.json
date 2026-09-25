@@ -20,6 +20,7 @@
     "token-savings",
     "code-review"
   ],
+  "skills": "./.agents/skills/",
   "userConfig": {
     "synapse_url": {
       "type": "string",
