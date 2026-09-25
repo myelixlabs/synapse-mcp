@@ -19,5 +19,13 @@
     "safe-writes",
     "token-savings",
     "code-review"
-  ]
+  ],
+  "userConfig": {
+    "synapse_url": {
+      "type": "string",
+      "title": "Synapse MCP URL",
+      "description": "Where the Synapse MCP server installed on this machine listens. Keep the default unless you started Synapse on another port.",
+      "default": "http://127.0.0.1:8585/mcp"
+    }
+  }
 }
