@@ -9,6 +9,6 @@ disable-model-invocation: true
 Tell the user first that Synapse tools will be unavailable for a few seconds.
 
 1. Run `synapse-mcp restart` in the shell.
-2. If the command is not found, Synapse is not installed: suggest `/synapse-mcp:setup` and stop.
+2. If the command is not found, Synapse is not installed: suggest `/synapse-mcp:status` and stop.
 3. Run `synapse-mcp status` and report whether the server is running again.
 4. If the Synapse tools do not come back in this session, ask the user to reconnect the server from `/mcp`.

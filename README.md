@@ -251,7 +251,7 @@ irm https://downloads.synapse-mcp.dev/install.ps1 | iex
 
 ## Claude plugin
 
-The [`claude-plugin/`](claude-plugin/) folder is a plugin for Claude Code and Cowork. It connects Claude to the Synapse server running on your machine and adds skills for setup, indexing, onboarding, change review, impact analysis and stack-trace resolution. Its [README](claude-plugin/README.md) says what it does and what data it touches.
+The [`claude-plugin/`](claude-plugin/) folder is a plugin for Claude Code and Cowork. It connects Claude to the Synapse server running on your machine and adds skills for status, indexing, onboarding, change review, impact analysis and stack-trace resolution. Its [README](claude-plugin/README.md) says what it does and what data it touches.
 
 ---
 

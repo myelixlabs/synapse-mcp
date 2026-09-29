@@ -4,14 +4,14 @@ Connects Claude to [Synapse MCP](https://synapse-mcp.dev), a code-knowledge grap
 
 ## Before you start
 
-Install Synapse and sign in. The plugin does not install or start it for you. Get it from [synapse-mcp.dev/download](https://synapse-mcp.dev/download), then run `/synapse-mcp:setup` to check everything is connected.
+Install Synapse and sign in. The plugin does not install or start it for you. Get it from [synapse-mcp.dev/download](https://synapse-mcp.dev/download), then run `/synapse-mcp:status` to check everything is connected.
 
 ## Skills
 
 | Skill | What it does | Plan |
 | --- | --- | --- |
 | `synapse-mcp` | Steers Claude to the Synapse tools for navigating, editing and reviewing code. Claude applies it on its own. | Free |
-| `/synapse-mcp:setup` | Checks Synapse is installed, running, signed in and connected. | Free |
+| `/synapse-mcp:status` | Whether Synapse is installed, running, signed in and connected, and whether this project is indexed. | Free |
 | `/synapse-mcp:index` | Registers the current project and reports indexing progress. | Free |
 | `/synapse-mcp:onboard` | A reading order for a codebase you are new to. | Free |
 | `/synapse-mcp:start`, `/synapse-mcp:restart` | Start or restart the Synapse server. Only run when you type them. | Free |

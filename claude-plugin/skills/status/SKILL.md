@@ -1,9 +1,9 @@
 ---
-name: setup
-description: Check that Synapse MCP is installed, running, signed in and connected, and walk the user through fixing whatever is missing. Use when the user asks to set up or check Synapse, or when Synapse tools are missing or failing.
+name: status
+description: Report whether Synapse MCP is installed, running, signed in and connected, and whether the current project is indexed, with the fix for anything missing. Use when the user asks about Synapse's status or to set it up, or when Synapse tools are missing or failing.
 ---
 
-# Set up Synapse
+# Synapse status
 
 Work through these in order and stop at the first thing that needs the user.
 
