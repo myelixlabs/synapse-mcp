@@ -1,0 +1,37 @@
+{
+  "name": "synapse-mcp",
+  "displayName": "Synapse MCP",
+  "version": "4.1.1",
+  "description": "Connects Claude to Synapse MCP, a local AST code-knowledge graph, and adds skills for codebase navigation, onboarding, safe edits, change review, impact analysis and stack-trace resolution.",
+  "author": {
+    "name": "Myelix Labs",
+    "email": "hello@myelixlabs.com",
+    "url": "https://synapse-mcp.dev"
+  },
+  "homepage": "https://synapse-mcp.dev",
+  "repository": "https://github.com/myelixlabs/synapse-mcp",
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "ast",
+    "codebase-graph",
+    "refactoring",
+    "safe-writes",
+    "token-savings",
+    "code-review"
+  ],
+  "mcpServers": {
+    "synapse": {
+      "type": "http",
+      "url": "${user_config.synapse_url}"
+    }
+  },
+  "userConfig": {
+    "synapse_url": {
+      "type": "string",
+      "title": "Synapse MCP URL",
+      "description": "Where the Synapse MCP server installed on this machine listens. Keep the default unless you started Synapse on another port.",
+      "default": "http://127.0.0.1:8585/mcp"
+    }
+  }
+}
