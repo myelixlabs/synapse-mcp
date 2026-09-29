@@ -11,7 +11,7 @@ Install Synapse and sign in. The plugin does not install or start it for you. Ge
 | Skill | What it does | Plan |
 | --- | --- | --- |
 | `synapse-mcp` | Steers Claude to the Synapse tools for navigating, editing and reviewing code. Claude applies it on its own. | Free |
-| `/synapse-mcp:status` | Whether Synapse is installed, running, signed in and connected, and whether this project is indexed. | Free |
+| `/synapse-mcp:status` | Whether Synapse is installed, running, signed in and connected, whether this project is indexed, and the tokens saved. | Free |
 | `/synapse-mcp:index` | Registers the current project and reports indexing progress. | Free |
 | `/synapse-mcp:onboard` | A reading order for a codebase you are new to. | Free |
 | `/synapse-mcp:start`, `/synapse-mcp:restart` | Start or restart the Synapse server. Only run when you type them. | Free |
