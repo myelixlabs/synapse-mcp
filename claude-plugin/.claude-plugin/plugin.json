@@ -9,6 +9,7 @@
     "url": "https://synapse-mcp.dev"
   },
   "homepage": "https://synapse-mcp.dev",
+  "privacyPolicyUrl": "https://synapse-mcp.dev/privacy",
   "repository": "https://github.com/myelixlabs/synapse-mcp",
   "license": "MIT",
   "keywords": [
