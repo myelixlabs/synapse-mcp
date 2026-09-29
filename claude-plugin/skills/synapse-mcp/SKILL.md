@@ -4,6 +4,7 @@ description: >
   Use this skill whenever navigating, exploring, reading, editing, debugging, or reviewing code in any repository managed by Synapse MCP, instead of using grep, find, ls, view_file, or shell commands. Use when asked to locate functions or symbols, trace callers and callees, inspect dependencies, verify test coverage, perform atomic lint-validated code edits, or assess the blast radius and safety of proposed code changes.
 compatibility: >
   Requires a running Synapse MCP server (SSE or stdio transport). Compatible with any Agent Skills compliant runtime: Cursor, Claude Code, Windsurf, Antigravity, Gemini CLI, etc.
+user-invocable: false
 metadata:
   author: myelix labs
 allowed-tools: ask_synapse synapse_manage_repos synapse_indexer_control synapse_search_codebase synapse_explore_graph synapse_get_context synapse_inspect_files synapse_modify_files synapse_change_review synapse_codebase_insights synapse_test_quality synapse_debug_trace synapse_knowledge_cache synapse_capability_manifest

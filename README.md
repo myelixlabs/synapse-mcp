@@ -284,7 +284,7 @@ Synapse ships a set of **agent skill files** (`.agents/skills/synapse-mcp/SKILL.
 
 The skill files live in `.agents/skills/`. They are plain Markdown — no Elixir knowledge required. If you can describe what went wrong, you can write the fix.
 
-The Claude plugin carries a copy of the skill at `claude-plugin/skills/synapse-mcp/SKILL.md`, because a plugin can only load files inside its own folder. Keep the two files identical.
+The Claude plugin carries a copy of the skill at `claude-plugin/skills/synapse-mcp/SKILL.md`, because a plugin can only load files inside its own folder. It is the same file plus one line, `user-invocable: false`, which keeps it out of Claude's slash-command menu. When you change the skill, change both.
 
 ---
 
