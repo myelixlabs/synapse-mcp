@@ -2,7 +2,7 @@
   "name": "synapse-mcp",
   "displayName": "Synapse MCP",
   "version": "4.1.1",
-  "description": "Teaches Claude to use Synapse MCP, a local AST code-knowledge graph, for codebase navigation, caller tracing, safe lint-validated edits, and diff blast-radius review instead of grep and raw file reads.",
+  "description": "Connects Claude to Synapse MCP, a local AST code-knowledge graph, and adds skills for codebase navigation, onboarding, safe edits, change review, impact analysis and stack-trace resolution.",
   "author": {
     "name": "Myelix Labs",
     "email": "hello@myelixlabs.com",
@@ -20,7 +20,6 @@
     "token-savings",
     "code-review"
   ],
-  "skills": "./.agents/skills/",
   "mcpServers": {
     "synapse": {
       "type": "http",

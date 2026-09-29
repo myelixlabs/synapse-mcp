@@ -251,17 +251,7 @@ irm https://downloads.synapse-mcp.dev/install.ps1 | iex
 
 ## Claude plugin
 
-This repository is also a Claude plugin. It adds the `synapse-mcp` skill, which teaches Claude to use the Synapse tools before grep and raw file reads, and the `/synapse-mcp:synapse-setup` command, which checks that Synapse is installed and running.
-
-The plugin contains only Markdown and JSON. It does not install or start the server, run hooks, or send any data anywhere itself. Its manifest points Claude at the Synapse MCP server you install separately with the commands above, at a URL you set when you enable the plugin. The default is `http://127.0.0.1:8585/mcp`, where Synapse listens on your machine. Claude Code asks for the URL and connects to it; Cowork sessions on your own computer use the default; claude.ai chat loads the skill but ignores the server, because it cannot reach your machine.
-
-If you connected Synapse to Claude Code earlier with `synapse-mcp setup ides configure claude-code`, remove that entry with `claude mcp remove synapse -s user`, otherwise the Synapse tools are listed twice.
-
-What the separately installed Synapse server does over the network:
-
-- Indexing, search, and edits run entirely on your machine. Your source code is never uploaded.
-- Signing in and checking your plan contacts `api.synapse-mcp.dev` with your account token.
-- Installing and updating downloads the Synapse binaries from `downloads.synapse-mcp.dev`.
+The [`claude-plugin/`](claude-plugin/) folder is a plugin for Claude Code and Cowork. It connects Claude to the Synapse server running on your machine and adds skills for setup, indexing, onboarding, change review, impact analysis and stack-trace resolution. Its [README](claude-plugin/README.md) says what it does and what data it touches.
 
 ---
 
@@ -271,7 +261,7 @@ What the separately installed Synapse server does over the network:
 
 LLMs are trained on billions of lines of code where developers reach for `grep`, `find`, `cat`, and `ls` to explore a codebase. That muscle memory is baked into the model weights. When an agent is dropped into a new project, its first instinct is to grep — even when a smarter, cheaper tool is available.
 
-Synapse ships a set of **agent skill files** (`.agents/skills/synapse-mcp/SKILL.md`) that agents load at session start. These files override the grep instinct by giving agents explicit routing rules, anti-patterns, and example tool calls. They are, in effect, **runtime training for the meta-layer** — teaching agents *how* to use the tools they have, not just what the tools do.
+Synapse ships a set of **agent skill files** (`.agents/skills/synapse-mcp/SKILL.MD`) that agents load at session start. These files override the grep instinct by giving agents explicit routing rules, anti-patterns, and example tool calls. They are, in effect, **runtime training for the meta-layer** — teaching agents *how* to use the tools they have, not just what the tools do.
 
 **The problem:** We can only write what we observe. You may have seen failure modes, routing gaps, or phrasing that your specific agent ignores. We haven't. The skill files improve dramatically with real-world usage reports.
 
@@ -289,10 +279,12 @@ Synapse ships a set of **agent skill files** (`.agents/skills/synapse-mcp/SKILL.
 ### How to contribute
 
 1. **Open an issue** — describe the failure mode or gap you observed. Include the agent, the query, and what it did vs. what it should have done.
-2. **Open a PR** — edit [`.agents/skills/synapse-mcp/SKILL.md`](.agents/skills/synapse-mcp/SKILL.md) directly. Skill file PRs are reviewed and merged fast — they don't require tests.
+2. **Open a PR** — edit [`.agents/skills/synapse-mcp/SKILL.MD`](.agents/skills/synapse-mcp/SKILL.MD) directly. Skill file PRs are reviewed and merged fast — they don't require tests.
 3. **Share a benchmark** — if you've run Synapse vs. shell tools on your own codebase and have numbers, we want to publish them.
 
 The skill files live in `.agents/skills/`. They are plain Markdown — no Elixir knowledge required. If you can describe what went wrong, you can write the fix.
+
+The Claude plugin carries a copy of the skill at `claude-plugin/skills/synapse-mcp/SKILL.md`, because a plugin can only load files inside its own folder. Keep the two files identical.
 
 ---
 
