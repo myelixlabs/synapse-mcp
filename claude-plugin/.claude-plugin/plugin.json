@@ -1,7 +1,7 @@
 {
   "name": "synapse-mcp",
   "displayName": "Synapse MCP",
-  "version": "4.1.1",
+  "version": "4.3.0",
   "description": "Connects Claude to Synapse MCP, a local AST code-knowledge graph, and adds skills for codebase navigation, onboarding, safe edits, change review, impact analysis and stack-trace resolution.",
   "author": {
     "name": "Myelix Labs",
